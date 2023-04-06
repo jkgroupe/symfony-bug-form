@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% import _self as macro %}
+
+{% block body %}
+    <div class="col-6">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'autocomplete': 'off'}}) }}
+
+        <div class="form-group row">
+            {{ form_label(form.name, 'Pipeline name', {'label_attr': {'class': 'col-sm-4 col-form-label'}}) }}
+            <div class="col-sm-8">
+                {{ form_widget(form.name, { 'attr': {'placeholder': 'Pipeline name' }}) }}
+                {{ form_errors(form.name) }}
+            </div>
+        </div>
+
+        <hr class="my-4"/>
+
+        <div class="row mb-3">
+            <div class="col-sm-12">
+                <div id="steps" class="form-collection"
+                     data-position=".position"
+                     data-prototype="{{ macro.form_prototype_step(form.steps.vars.prototype)|e('html_attr') }}"
+                     data-prototype-name="{{ form.steps.vars.prototype.vars.name|e('html_attr') }}"
+                     data-name-prefix="{{ form.steps.vars.full_name }}"
+                     data-drag-drop="true"
+                     data-custom-add-location="true">
+                    {% for step in form.steps %}
+                        {{ macro.form_prototype_step(step) }}
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.steps) }}
+            </div>
+            <div class="col-sm-12 text-center my-3">
+                <button data-collection="steps" class="steps-collection-action steps-collection-add btn btn-secondary btn-sm">
+                    Add new step
+                </button>
+            </div>
+        </div>
+
+        {{ form_widget(form._token) }}
+
+        <div class="col-12">
+            <button id="save" name="save" type="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+
+    {% macro form_prototype_step(step) %}
+        <div class="form-group mb-3">
+            <div class="d-flex">
+                <div class="flex-shrink-1 me-1">
+                    <a href="javascript:void(0)" class="btn btn-link"><i class="fas fa-fw fa-arrows-alt"></i></a>
+                </div>
+                <div class="w-75 mx-1">
+                    {{ form_widget(step.position) }}
+                    {{ form_widget(step.name, {'attr': {'placeholder': 'Name' }}) }}
+                    {{ form_errors(step.name) }}
+                </div>
+                <div class="w-25 mx-1">
+                    {{ form_widget(step.probability, {'placeholder': 'Probability', 'attr': {'class': 'custom-select'}}) }}
+                    {{ form_errors(step.probability) }}
+                </div>
+                <div class="flex-shrink-1 ms-1">
+                    <a href="#" class="collection-up btn btn-link d-none"><i class="fa fa-fw fa-chevron-up"></i></a>
+                    <a href="#" class="collection-down btn btn-link d-none"><i class="fa fa-fw fa-chevron-down"></i></a>
+                    <a href="#" class="collection-remove btn btn-link"><i class="fa fa-fw text-danger fa-trash"></i></a>
+                </div>
+            </div>
+        </div>
+    {% endmacro %}
+{% endblock %}
